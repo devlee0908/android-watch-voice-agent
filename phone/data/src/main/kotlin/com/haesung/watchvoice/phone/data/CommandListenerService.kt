@@ -18,16 +18,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
-/**
- * Receives watch commands while the agent is in the background and replies on
- * [MessagePaths.RESULT].
- *
- * App launching and calendar writes are not wired up yet; every recognised command answers with a
- * result so the watch can distinguish "not delivered" from "delivered but unimplemented".
- */
 class CommandListenerService : WearableListenerService() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val appLauncher by lazy { AndroidAppLauncher(this) }
 
     override fun onDestroy() {
         scope.cancel()
@@ -45,7 +39,7 @@ class CommandListenerService : WearableListenerService() {
         scope.launch { reply(event.sourceNodeId, handle(envelope)) }
     }
 
-    private fun handle(envelope: CommandEnvelope): CommandResult {
+    private suspend fun handle(envelope: CommandEnvelope): CommandResult {
         val id = envelope.commandId
         if (envelope.protocolVersion != CommandEnvelope.PROTOCOL_VERSION) {
             return CommandResult.Failure(id, FailureReason.UNSUPPORTED_PROTOCOL_VERSION)
@@ -55,9 +49,28 @@ class CommandListenerService : WearableListenerService() {
             return CommandResult.Failure(id, FailureReason.STALE_COMMAND, detail = "${age}ms old")
         }
 
-        return when (envelope.command) {
+        return when (val command = envelope.command) {
             is WatchCommand.Ping -> CommandResult.Success(id, message = "pong")
-            is WatchCommand.LaunchApp,
+            is WatchCommand.LaunchApp -> when (val outcome = appLauncher.launch(command.appKey)) {
+                is com.haesung.watchvoice.phone.domain.LaunchOutcome.Launched ->
+                    CommandResult.Success(id, message = outcome.label)
+                com.haesung.watchvoice.phone.domain.LaunchOutcome.NotInstalled ->
+                    CommandResult.Failure(id, FailureReason.APP_NOT_INSTALLED)
+                com.haesung.watchvoice.phone.domain.LaunchOutcome.NotLaunchable ->
+                    CommandResult.Failure(id, FailureReason.APP_NOT_LAUNCHABLE)
+                is com.haesung.watchvoice.phone.domain.LaunchOutcome.Ambiguous ->
+                    CommandResult.Failure(
+                        id,
+                        FailureReason.APP_AMBIGUOUS,
+                        detail = outcome.candidateLabels.joinToString(),
+                    )
+                is com.haesung.watchvoice.phone.domain.LaunchOutcome.BlockedNeedsUserTap ->
+                    CommandResult.Failure(
+                        id,
+                        FailureReason.LAUNCH_BLOCKED_NEEDS_USER_TAP,
+                        detail = outcome.label,
+                    )
+            }
             is WatchCommand.CreateCalendarEvent,
             is WatchCommand.UpdateCalendarEvent,
             -> CommandResult.Failure(id, FailureReason.UNSUPPORTED_COMMAND)
