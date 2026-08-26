@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Watch Voice Companion</string>
+    <string name="status_title">연결 상태</string>
+    <string name="status_body">워치 앱에서 \"폰 연결 확인\"을 누르면 이 컴패니언이 응답합니다.</string>
+</resources>
