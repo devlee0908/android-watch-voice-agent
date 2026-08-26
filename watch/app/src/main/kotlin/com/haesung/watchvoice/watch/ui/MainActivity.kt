@@ -5,9 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.haesung.watchvoice.watch.watchContainer
@@ -15,11 +18,31 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var voiceViewModel: VoiceViewModel
+    private val voiceViewModel: VoiceViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                val container = watchContainer
+                return VoiceViewModel(
+                    container.commandTransport,
+                    container.intentParser,
+                ) as T
+            }
+        }
+    }
+
     private val speechLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
     ) { result ->
-        voiceViewModel.handleRecognitionResult(result.resultCode, result.data)
+        if (result.resultCode == RESULT_OK) {
+            val transcript = result.data
+                ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+                ?.firstOrNull()
+                .orEmpty()
+            voiceViewModel.onTranscript(transcript)
+        } else {
+            voiceViewModel.onCancelled()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,12 +52,8 @@ class MainActivity : ComponentActivity() {
             val connectionViewModel: ConnectionViewModel = viewModel {
                 ConnectionViewModel(container.commandTransport)
             }
-            val voiceModel: VoiceViewModel = viewModel {
-                VoiceViewModel(container.commandTransport, container.intentParser)
-            }
-            voiceViewModel = voiceModel
             val connectionState by connectionViewModel.state.collectAsStateWithLifecycle()
-            val voiceState by voiceModel.state.collectAsStateWithLifecycle()
+            val voiceState by voiceViewModel.state.collectAsStateWithLifecycle()
             ConnectionScreen(
                 state = connectionState,
                 onCheck = connectionViewModel::check,

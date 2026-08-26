@@ -1,7 +1,5 @@
 package com.haesung.watchvoice.watch.ui
 
-import android.app.Activity
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.haesung.watchvoice.protocol.CommandResult
@@ -12,6 +10,7 @@ import com.haesung.watchvoice.watch.domain.ParseContext
 import com.haesung.watchvoice.watch.domain.ParseOutcome
 import com.haesung.watchvoice.watch.domain.TransportOutcome
 import java.util.Locale
+import java.util.TimeZone
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,19 +49,11 @@ class VoiceViewModel(
         _state.value = VoiceState.RecognizerUnavailable
     }
 
-    fun handleRecognitionResult(resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK) {
-            _state.value = VoiceState.NotUnderstood
-            return
-        }
-        val transcript = data
-            ?.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS)
-            ?.firstOrNull()
-            .orEmpty()
-        handleTranscript(transcript)
+    fun onCancelled() {
+        _state.value = VoiceState.Idle
     }
 
-    fun handleTranscript(transcript: String) {
+    fun onTranscript(transcript: String) {
         if (transcript.isBlank()) {
             _state.value = VoiceState.NotUnderstood
             return
@@ -70,11 +61,16 @@ class VoiceViewModel(
 
         viewModelScope.launch {
             _state.value = VoiceState.Sending
-            when (val parsed = parser.parse(transcript, ParseContext(
-                nowEpochMs = System.currentTimeMillis(),
-                timeZoneId = java.util.TimeZone.getDefault().id,
-                languageTag = locale.toLanguageTag(),
-            ))) {
+            when (
+                val parsed = parser.parse(
+                    transcript,
+                    ParseContext(
+                        nowEpochMs = System.currentTimeMillis(),
+                        timeZoneId = TimeZone.getDefault().id,
+                        languageTag = locale.toLanguageTag(),
+                    ),
+                )
+            ) {
                 is ParseOutcome.Parsed -> send(parsed)
                 is ParseOutcome.NeedsClarification -> _state.value = VoiceState.NotUnderstood
                 ParseOutcome.NotUnderstood -> _state.value = VoiceState.NotUnderstood

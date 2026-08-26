@@ -7,6 +7,7 @@ import com.haesung.watchvoice.protocol.WatchCommand
 import com.haesung.watchvoice.watch.domain.CommandTransport
 import com.haesung.watchvoice.watch.domain.IntentParser
 import com.haesung.watchvoice.watch.domain.ParseContext
+import com.haesung.watchvoice.watch.domain.ParseOutcome
 import com.haesung.watchvoice.watch.domain.TransportOutcome
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,8 +39,7 @@ class VoiceViewModelTest {
         }
     }
 
-    private class FakeParser(private val outcome: com.haesung.watchvoice.watch.domain.ParseOutcome) :
-        IntentParser {
+    private class FakeParser(private val outcome: ParseOutcome) : IntentParser {
         override suspend fun parse(
             transcript: String,
             context: ParseContext,
@@ -54,14 +54,14 @@ class VoiceViewModelTest {
         val viewModel = VoiceViewModel(
             transport,
             FakeParser(
-                com.haesung.watchvoice.watch.domain.ParseOutcome.Parsed(
+                    ParseOutcome.Parsed(
                     WatchCommand.LaunchApp("spotify"),
                     1f,
                 ),
             ),
         )
 
-        viewModel.handleTranscript("open spotify")
+        viewModel.onTranscript("open spotify")
         testScheduler.advanceUntilIdle()
 
         assertThat(transport.sent).isEqualTo(WatchCommand.LaunchApp("spotify"))
@@ -77,14 +77,14 @@ class VoiceViewModelTest {
                 ),
             ),
             FakeParser(
-                com.haesung.watchvoice.watch.domain.ParseOutcome.Parsed(
+                ParseOutcome.Parsed(
                     WatchCommand.LaunchApp("note"),
                     1f,
                 ),
             ),
         )
 
-        viewModel.handleTranscript("open note")
+        viewModel.onTranscript("open note")
         testScheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value).isEqualTo(VoiceState.Ambiguous("Notes, Noted"))
@@ -95,13 +95,26 @@ class VoiceViewModelTest {
         val transport = FakeTransport(TransportOutcome.AgentUnreachable)
         val viewModel = VoiceViewModel(
             transport,
-            FakeParser(com.haesung.watchvoice.watch.domain.ParseOutcome.NotUnderstood),
+            FakeParser(ParseOutcome.NotUnderstood),
         )
 
-        viewModel.handleTranscript("what time is it")
+        viewModel.onTranscript("what time is it")
         testScheduler.advanceUntilIdle()
 
         assertThat(transport.sent).isNull()
         assertThat(viewModel.state.value).isEqualTo(VoiceState.NotUnderstood)
+    }
+
+    @Test
+    fun `cancelled recognition returns to idle`() = runTest(dispatcher) {
+        val viewModel = VoiceViewModel(
+            FakeTransport(TransportOutcome.AgentUnreachable),
+            FakeParser(ParseOutcome.NotUnderstood),
+        )
+
+        viewModel.beginListening()
+        viewModel.onCancelled()
+
+        assertThat(viewModel.state.value).isEqualTo(VoiceState.Idle)
     }
 }

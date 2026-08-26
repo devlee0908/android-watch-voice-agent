@@ -67,14 +67,6 @@ class AndroidAppLauncher(
     }
 
     private fun postLaunchNotification(label: String, launchIntent: Intent) {
-        val notificationManager = context.getSystemService(NotificationManager::class.java)
-        notificationManager.createNotificationChannel(
-            NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                context.getString(R.string.launch_notification_channel_name),
-                NotificationManager.IMPORTANCE_HIGH,
-            ),
-        )
         if (
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
@@ -83,6 +75,14 @@ class AndroidAppLauncher(
             return
         }
 
+        val notificationManager = context.getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                context.getString(R.string.launch_notification_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            ),
+        )
         val pendingIntent = PendingIntent.getActivity(
             context,
             label.hashCode(),
@@ -90,7 +90,7 @@ class AndroidAppLauncher(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.launch_notification_title))
             .setContentText(context.getString(R.string.launch_notification_text, label))
             .setContentIntent(pendingIntent)

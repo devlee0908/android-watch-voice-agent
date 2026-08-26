@@ -3,6 +3,7 @@ package com.haesung.watchvoice.phone.data
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableListenerService
+import com.haesung.watchvoice.phone.domain.LaunchOutcome
 import com.haesung.watchvoice.protocol.CommandEnvelope
 import com.haesung.watchvoice.protocol.CommandResult
 import com.haesung.watchvoice.protocol.FailureReason
@@ -52,19 +53,19 @@ class CommandListenerService : WearableListenerService() {
         return when (val command = envelope.command) {
             is WatchCommand.Ping -> CommandResult.Success(id, message = "pong")
             is WatchCommand.LaunchApp -> when (val outcome = appLauncher.launch(command.appKey)) {
-                is com.haesung.watchvoice.phone.domain.LaunchOutcome.Launched ->
+                is LaunchOutcome.Launched ->
                     CommandResult.Success(id, message = outcome.label)
-                com.haesung.watchvoice.phone.domain.LaunchOutcome.NotInstalled ->
+                LaunchOutcome.NotInstalled ->
                     CommandResult.Failure(id, FailureReason.APP_NOT_INSTALLED)
-                com.haesung.watchvoice.phone.domain.LaunchOutcome.NotLaunchable ->
+                LaunchOutcome.NotLaunchable ->
                     CommandResult.Failure(id, FailureReason.APP_NOT_LAUNCHABLE)
-                is com.haesung.watchvoice.phone.domain.LaunchOutcome.Ambiguous ->
+                is LaunchOutcome.Ambiguous ->
                     CommandResult.Failure(
                         id,
                         FailureReason.APP_AMBIGUOUS,
                         detail = outcome.candidateLabels.joinToString(),
                     )
-                is com.haesung.watchvoice.phone.domain.LaunchOutcome.BlockedNeedsUserTap ->
+                is LaunchOutcome.BlockedNeedsUserTap ->
                     CommandResult.Failure(
                         id,
                         FailureReason.LAUNCH_BLOCKED_NEEDS_USER_TAP,
