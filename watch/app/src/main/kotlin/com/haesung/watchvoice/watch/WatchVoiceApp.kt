@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import com.haesung.watchvoice.watch.data.WearableCommandTransport
 import com.haesung.watchvoice.watch.domain.CommandTransport
+import com.haesung.watchvoice.watch.domain.IntentParser
+import com.haesung.watchvoice.watch.domain.RuleBasedIntentParser
 import timber.log.Timber
 
 class WatchVoiceApp : Application() {
@@ -26,6 +28,7 @@ class WatchVoiceApp : Application() {
  */
 class WatchContainer(context: Context) {
     val commandTransport: CommandTransport = WearableCommandTransport(context.applicationContext)
+    val intentParser: IntentParser = RuleBasedIntentParser()
 }
 
 val Context.watchContainer: WatchContainer

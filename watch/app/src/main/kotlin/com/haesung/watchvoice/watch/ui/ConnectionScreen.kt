@@ -20,6 +20,8 @@ import com.haesung.watchvoice.watch.R
 fun ConnectionScreen(
     state: ConnectionState,
     onCheck: () -> Unit,
+    voiceState: VoiceState = VoiceState.Idle,
+    onListen: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     MaterialTheme {
@@ -34,6 +36,10 @@ fun ConnectionScreen(
             Button(onClick = onCheck) {
                 Text(text = stringResource(R.string.connection_check))
             }
+            Text(text = voiceState.message(), textAlign = TextAlign.Center)
+            Button(onClick = onListen) {
+                Text(text = stringResource(R.string.voice_input))
+            }
         }
     }
 }
@@ -45,6 +51,26 @@ private fun ConnectionState.messageRes(): Int = when (this) {
     ConnectionState.AgentUnreachable -> R.string.agent_unreachable
     ConnectionState.TimedOut -> R.string.timed_out
     is ConnectionState.Failed -> R.string.delivery_failed
+}
+
+@Composable
+private fun VoiceState.message(): String = when (this) {
+    VoiceState.Idle -> stringResource(R.string.voice_ready)
+    VoiceState.Listening -> stringResource(R.string.voice_listening)
+    VoiceState.Sending -> stringResource(R.string.voice_sending)
+    is VoiceState.Launched -> stringResource(R.string.voice_launched, label)
+    VoiceState.NotUnderstood -> stringResource(R.string.voice_not_understood)
+    VoiceState.AppNotInstalled -> stringResource(R.string.voice_app_not_installed)
+    VoiceState.AppNotLaunchable -> stringResource(R.string.voice_app_not_launchable)
+    is VoiceState.Ambiguous -> stringResource(R.string.voice_ambiguous, candidates)
+    is VoiceState.NeedsUserTap -> stringResource(
+        R.string.voice_needs_user_tap,
+        detail.orEmpty(),
+    )
+    VoiceState.AgentUnreachable -> stringResource(R.string.agent_unreachable)
+    VoiceState.TimedOut -> stringResource(R.string.timed_out)
+    is VoiceState.DeliveryFailed -> stringResource(R.string.delivery_failed)
+    VoiceState.RecognizerUnavailable -> stringResource(R.string.voice_recognizer_unavailable)
 }
 
 @Preview(device = "id:wearos_small_round", showSystemUi = true)
