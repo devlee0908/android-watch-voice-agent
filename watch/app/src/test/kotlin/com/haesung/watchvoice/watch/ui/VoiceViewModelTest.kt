@@ -54,7 +54,7 @@ class VoiceViewModelTest {
         val viewModel = VoiceViewModel(
             transport,
             FakeParser(
-                    ParseOutcome.Parsed(
+                ParseOutcome.Parsed(
                     WatchCommand.LaunchApp("spotify"),
                     1f,
                 ),
