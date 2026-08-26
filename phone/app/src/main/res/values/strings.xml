@@ -3,4 +3,11 @@
     <string name="app_name">Watch Voice Agent</string>
     <string name="status_title">연결 상태</string>
     <string name="status_body">워치 앱에서 \"폰 연결 확인\"을 누르면 이 에이전트가 응답합니다.</string>
+    <string name="overlay_granted">다른 앱 위에 표시: 허용됨</string>
+    <string name="overlay_not_granted">다른 앱 위에 표시: 허용되지 않음</string>
+    <string name="overlay_settings">오버레이 권한 설정</string>
+    <string name="overlay_explanation">오버레이 권한이 없으면 앱 실행 요청이 눌러야 하는 알림으로 도착합니다.</string>
+    <string name="notifications_granted">알림 권한: 허용됨</string>
+    <string name="notifications_not_granted">알림 권한: 허용되지 않음</string>
+    <string name="notification_settings">알림 권한 허용</string>
 </resources>
