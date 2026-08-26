@@ -1,6 +1,6 @@
-# Galaxy Watch Voice Agent
+# Android Watch Voice Agent
 
-Galaxy Watch 9(Wear OS 7)에서 음성으로 **폰의 앱을 실행**하고 **캘린더 일정을 만들고 수정**하기 위한
+Wear OS 워치(개발 기준 Galaxy Watch 9)에서 음성으로 **폰의 앱을 실행**하고 **캘린더 일정을 만들고 수정**하기 위한
 워치 앱 + 폰 에이전트 앱입니다. 이 저장소는 Phase 0(스캐폴딩 + Watch↔Phone 통신 골격) 상태입니다.
 
 ## 모듈 구조
