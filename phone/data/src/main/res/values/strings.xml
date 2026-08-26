@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="launch_notification_channel_name">앱 실행</string>
+    <string name="launch_notification_title">앱을 열 준비가 되었습니다</string>
+    <string name="launch_notification_text">%1$s을(를) 열려면 알림을 누르세요.</string>
+</resources>

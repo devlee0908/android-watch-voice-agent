@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Watch Voice</string>
+    <string name="connection_check">폰 연결 확인</string>
+    <string name="checking">확인 중…</string>
+    <string name="connected">폰 에이전트 연결됨</string>
+    <string name="agent_unreachable">폰 에이전트를 찾을 수 없습니다</string>
+    <string name="delivery_failed">전송 실패</string>
+    <string name="timed_out">응답 없음</string>
+    <string name="voice_input">말하기</string>
+    <string name="voice_ready">앱 이름을 말해 보세요</string>
+    <string name="voice_listening">듣는 중…</string>
+    <string name="voice_sending">전송 중…</string>
+    <string name="voice_launched">%1$s을(를) 열었습니다</string>
+    <string name="voice_not_understood">앱 실행 명령을 이해하지 못했습니다</string>
+    <string name="voice_app_not_installed">앱이 설치되어 있지 않습니다</string>
+    <string name="voice_app_not_launchable">실행할 수 있는 앱 화면이 없습니다</string>
+    <string name="voice_ambiguous">여러 앱이 일치합니다: %1$s</string>
+    <string name="voice_needs_user_tap">%1$s: 폰 알림을 누르거나 오버레이 권한을 허용해 주세요</string>
+    <string name="voice_recognizer_unavailable">음성 인식을 사용할 수 없습니다</string>
+</resources>
