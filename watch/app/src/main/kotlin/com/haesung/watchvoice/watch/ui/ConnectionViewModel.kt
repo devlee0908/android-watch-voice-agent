@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/** Phase 0 screen state: proves the watch can reach the phone companion and get an answer back. */
+/** Phase 0 screen state: proves the watch can reach the phone agent and get an answer back. */
 sealed interface ConnectionState {
     data object Idle : ConnectionState
     data object Checking : ConnectionState
     data object Connected : ConnectionState
-    data object CompanionUnreachable : ConnectionState
+    data object AgentUnreachable : ConnectionState
     data object TimedOut : ConnectionState
     data class Failed(val detail: String?) : ConnectionState
 }
@@ -35,7 +35,7 @@ class ConnectionViewModel(private val transport: CommandTransport) : ViewModel()
                     is CommandResult.Success -> ConnectionState.Connected
                     is CommandResult.Failure -> ConnectionState.Failed(result.reason.name)
                 }
-                TransportOutcome.CompanionUnreachable -> ConnectionState.CompanionUnreachable
+                TransportOutcome.AgentUnreachable -> ConnectionState.AgentUnreachable
                 TransportOutcome.TimedOut -> ConnectionState.TimedOut
                 is TransportOutcome.DeliveryFailed -> ConnectionState.Failed(outcome.detail)
             }

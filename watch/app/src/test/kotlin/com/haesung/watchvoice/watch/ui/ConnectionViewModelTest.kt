@@ -50,13 +50,13 @@ class ConnectionViewModelTest {
     }
 
     @Test
-    fun `an unreachable companion is distinct from a failure`() = runTest(dispatcher) {
-        val viewModel = ConnectionViewModel(FakeTransport(TransportOutcome.CompanionUnreachable))
+    fun `an unreachable agent is distinct from a failure`() = runTest(dispatcher) {
+        val viewModel = ConnectionViewModel(FakeTransport(TransportOutcome.AgentUnreachable))
 
         viewModel.check()
         testScheduler.advanceUntilIdle()
 
-        assertThat(viewModel.state.value).isEqualTo(ConnectionState.CompanionUnreachable)
+        assertThat(viewModel.state.value).isEqualTo(ConnectionState.AgentUnreachable)
     }
 
     @Test

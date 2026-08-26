@@ -3,7 +3,7 @@ package com.haesung.watchvoice.protocol
 import kotlinx.serialization.Serializable
 
 /**
- * A single imperative request travelling from the watch to the phone companion.
+ * A single imperative request travelling from the watch to the phone agent.
  *
  * The set of commands is intentionally closed and carries no Android types: a forged or replayed
  * message cannot express an arbitrary component, action, or extra.

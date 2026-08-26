@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "galaxy-watch-voice-companion"
+rootProject.name = "galaxy-watch-voice-agent"
 
 include(":shared:protocol")
 include(":watch:app")

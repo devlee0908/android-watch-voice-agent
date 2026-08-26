@@ -34,7 +34,7 @@ class WearableCommandTransport(
 ) : CommandTransport {
 
     override suspend fun send(command: WatchCommand): TransportOutcome {
-        val nodeId = findCompanionNode() ?: return TransportOutcome.CompanionUnreachable
+        val nodeId = findAgentNode() ?: return TransportOutcome.AgentUnreachable
         val envelope = CommandEnvelope(
             commandId = UUID.randomUUID().toString(),
             sentAtEpochMs = System.currentTimeMillis(),
@@ -68,9 +68,9 @@ class WearableCommandTransport(
         }
     }
 
-    private suspend fun findCompanionNode(): String? {
+    private suspend fun findAgentNode(): String? {
         val capability = capabilityClient
-            .getCapability(MessagePaths.COMPANION_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
+            .getCapability(MessagePaths.AGENT_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
             .await()
         return capability.nodes.firstOrNull { it.isNearby }?.id ?: capability.nodes.firstOrNull()?.id
     }

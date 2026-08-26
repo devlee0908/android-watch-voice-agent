@@ -19,7 +19,7 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 /**
- * Receives watch commands while the companion is in the background and replies on
+ * Receives watch commands while the agent is in the background and replies on
  * [MessagePaths.RESULT].
  *
  * App launching and calendar writes are not wired up yet; every recognised command answers with a

@@ -3,7 +3,7 @@ package com.haesung.watchvoice.phone
 import android.app.Application
 import timber.log.Timber
 
-class PhoneCompanionApp : Application() {
+class PhoneAgentApp : Application() {
 
     override fun onCreate() {
         super.onCreate()

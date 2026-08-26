@@ -42,7 +42,7 @@ private fun ConnectionState.messageRes(): Int = when (this) {
     ConnectionState.Idle -> R.string.app_name
     ConnectionState.Checking -> R.string.checking
     ConnectionState.Connected -> R.string.connected
-    ConnectionState.CompanionUnreachable -> R.string.companion_unreachable
+    ConnectionState.AgentUnreachable -> R.string.agent_unreachable
     ConnectionState.TimedOut -> R.string.timed_out
     is ConnectionState.Failed -> R.string.delivery_failed
 }

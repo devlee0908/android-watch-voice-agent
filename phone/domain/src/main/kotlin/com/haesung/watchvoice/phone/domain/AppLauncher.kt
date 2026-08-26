@@ -20,7 +20,7 @@ sealed interface LaunchOutcome {
 
     /**
      * Resolved, but the background activity launch was refused — the user has not granted
-     * "display over other apps", so the companion must fall back to a notification.
+     * "display over other apps", so the agent must fall back to a notification.
      */
     data class BlockedNeedsUserTap(val label: String) : LaunchOutcome
 }

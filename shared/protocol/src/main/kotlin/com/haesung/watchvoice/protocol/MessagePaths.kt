@@ -8,6 +8,6 @@ object MessagePaths {
     /** DataClient item carrying the phone's launchable-app list and permission state. */
     const val PHONE_STATE = "/watchvoice/phone_state"
 
-    /** Capability advertised by the phone companion so the watch can detect it. */
-    const val COMPANION_CAPABILITY = "watchvoice_companion"
+    /** Capability advertised by the phone agent so the watch can detect it. */
+    const val AGENT_CAPABILITY = "watchvoice_agent"
 }

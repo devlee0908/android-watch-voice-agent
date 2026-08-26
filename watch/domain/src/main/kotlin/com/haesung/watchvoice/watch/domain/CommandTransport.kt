@@ -4,7 +4,7 @@ import com.haesung.watchvoice.protocol.CommandResult
 import com.haesung.watchvoice.protocol.WatchCommand
 
 /**
- * Sends a command to the phone companion and waits for its result.
+ * Sends a command to the phone agent and waits for its result.
  *
  * The domain never sees the Wearable Data Layer; [com.haesung.watchvoice.watch.data] provides the
  * only implementation that does.
@@ -16,8 +16,8 @@ interface CommandTransport {
 sealed interface TransportOutcome {
     data class Completed(val result: CommandResult) : TransportOutcome
 
-    /** No paired phone reachable, or the companion app is not installed on it. */
-    data object CompanionUnreachable : TransportOutcome
+    /** No paired phone reachable, or the agent app is not installed on it. */
+    data object AgentUnreachable : TransportOutcome
 
     data class DeliveryFailed(val detail: String?) : TransportOutcome
 
