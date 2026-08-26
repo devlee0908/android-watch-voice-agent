@@ -68,15 +68,13 @@ class AndroidAppLauncher(
 
     private fun postLaunchNotification(label: String, launchIntent: Intent) {
         val notificationManager = context.getSystemService(NotificationManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(
-                NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    context.getString(R.string.launch_notification_channel_name),
-                    NotificationManager.IMPORTANCE_HIGH,
-                ),
-            )
-        }
+        notificationManager.createNotificationChannel(
+            NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                context.getString(R.string.launch_notification_channel_name),
+                NotificationManager.IMPORTANCE_HIGH,
+            ),
+        )
         if (
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
