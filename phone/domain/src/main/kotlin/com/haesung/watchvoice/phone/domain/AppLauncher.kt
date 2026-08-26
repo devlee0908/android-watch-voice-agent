@@ -1,7 +1,7 @@
 package com.haesung.watchvoice.phone.domain
 
 /**
- * Resolves a logical app key (`"spotify"`) against the apps installed on this phone and starts it.
+ * Resolves a spoken app name (`"spotify"`) against the apps installed on this phone and starts it.
  *
  * Only the phone can do this resolution, which is why the watch never sends a package name,
  * component, or intent — a message from the watch cannot name an arbitrary target.
@@ -17,6 +17,8 @@ sealed interface LaunchOutcome {
 
     /** Installed but has no launchable activity (background-only or widget-only apps). */
     data object NotLaunchable : LaunchOutcome
+
+    data class Ambiguous(val candidateLabels: List<String>) : LaunchOutcome
 
     /**
      * Resolved, but the background activity launch was refused — the user has not granted

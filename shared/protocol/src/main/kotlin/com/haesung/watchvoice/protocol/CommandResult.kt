@@ -24,6 +24,7 @@ sealed interface CommandResult {
 enum class FailureReason {
     APP_NOT_INSTALLED,
     APP_NOT_LAUNCHABLE,
+    APP_AMBIGUOUS,
     LAUNCH_BLOCKED_NEEDS_USER_TAP,
     CALENDAR_PERMISSION_DENIED,
     NO_WRITABLE_CALENDAR,
